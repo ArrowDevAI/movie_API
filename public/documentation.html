@@ -5,10 +5,93 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Movie API</title>
-  <p>Documentation</p>
 </head>
     
     <body>
+      <h2>movie_API Endpoints</h2>
+
+<!-- Create a table -->
+<table>
+    <!-- Table header row -->
+    <tr>
+        <th>Request</th>
+        <th>URL</th>
+        <th>HTTP Method</th>
+        <th>Request Body Data Format</th>
+        <th>Response Body Data Format</th>
+    </tr>
+    <!-- Table data rows -->
+    <tr>
+        <td>Return a list of all movies</td>
+        <td> /movies</td>
+        <td> GET</td>
+        <td>None</td>
+        <td>A JSON Object holding data about the movies</td>
+    </tr>
+    <tr>
+        <td>Return Data about a single movie title </td>
+        <td>/movies/[Name]</td>
+        <td>GET</td>
+        <td>None</td>
+        <td>A JSON Object holding data about a single title</td>
+    </tr>
+    <tr>
+        <td>Return Data about a Genre</td>
+        <td>/movies/genres/[Name]</td>
+        <td>GET</td>
+        <td>None</td>
+        <td>A JSON Object holding data about a single genre</td>
+    </tr>
+    <tr>
+        <td>Return Data about a Director by name</td>
+        <td>/movies/[Directors]/[Name]</td>
+        <td>GET</td>
+        <td>None</td>
+        <td>A JSON object holding data about a single director</td>
+    </tr>
+    <tr>
+        <td>Allow new users to register</td>
+        <td>/users/register</td>
+        <td>POST</td>
+        <td>  {<br>
+            "userName":"TestUserName",<br>
+            "password":"TestPass"<br>
+        }
+    </td>
+        <td>A text response of the added username only</td>
+    </tr>
+    <tr>
+        <td>Allow Users to Update their user info (username)</td>
+        <td>/users/[userName]</td>
+        <td>PUT</td>
+        <td>None</td>
+        <td>A text message and http status indication if the new username is successful
+        and an error message if user not found</td>
+    </tr>
+    <tr>
+        <td>Allow users to add a movie to their list of favorites</td>
+        <td>/users/[userName]/favorites</td>
+        <td>POST</td>
+        <td>{<br>
+            "title": "Movie Title"<br>
+        }</td>
+        <td>A JSON formatted response of the title just added</td>
+    </tr>
+    <tr>
+        <td>Allow users to remove a movie to their list of favorites</td>
+        <td>/users/[userName]/favorites</td>
+        <td>DELETE</td>
+        <td>JSON to be defined</td>
+        <td>A text message  that a title has been removed</td>
+    </tr>
+    <tr>
+        <td>Allow Existing users to de-register</td>
+        <td>users/register/</td>
+        <td>DELETE</td>
+        <td>None</td>
+        <td>A text message that a user email has been removed</td>
+    </tr>
+</table>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
