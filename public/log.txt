@@ -292,3 +292,4 @@
 ::ffff:127.0.0.1 - - [08/May/2024:21:46:29 +0000] "POST /users/NewUserName/favorites/ HTTP/1.1" 500 14
 ::ffff:127.0.0.1 - - [08/May/2024:21:47:04 +0000] "POST /users/NewUserName/favorites HTTP/1.1" 201 18
 ::ffff:127.0.0.1 - - [08/May/2024:21:47:36 +0000] "DELETE /users/NewUserName/favorites/Batman HTTP/1.1" 201 31
+::ffff:127.0.0.1 - - [08/May/2024:21:56:45 +0000] "GET /users HTTP/1.1" 200 47
