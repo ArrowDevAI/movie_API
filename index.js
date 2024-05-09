@@ -95,19 +95,7 @@ app.get("/movies", (req,res)=>{
     res.json(topMovies);
 });
 
- let registerRepository = (function (){
-
-    app.get("/users", (req,res)=>{
-        res.json(users);
-        function userList(){
-            return users;
-        }
-        return {
-            userList:userList
-        }
-    });
-    })();  
-
+ 
 app.get('/movies/:title', (req,res)=>{
     res.json(topMovies.find((movie)=>{
     {
