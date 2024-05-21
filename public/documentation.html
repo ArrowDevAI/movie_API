@@ -44,52 +44,60 @@
     </tr>
     <tr>
         <td>Return Data about a Director by name</td>
-        <td>/movies/[Directors]/[Name]</td>
+        <td>/movies/directors/[Name]</td>
         <td>GET</td>
         <td>None</td>
         <td>A JSON object holding data about a single director</td>
     </tr>
     <tr>
         <td>Allow new users to register</td>
-        <td>/users/register</td>
+        <td>/users </td>
         <td>POST</td>
         <td>  {<br>
-            "userName":"TestUserName",<br>
-            "password":"TestPass"<br>
+        "Username": "string", <br>
+        "Password": "string", <br>
+        "Email": "string", <br>
+        "Birthday": "string" <br>
         }
     </td>
-        <td>A text response of the added username only</td>
+        <td>A text response of the added username only + "added"</td>
     </tr>
     <tr>
-        <td>Allow Users to Update their user info (username)</td>
+        <td>Allow Users to Update their user info </td>
         <td>/users/[userName]</td>
         <td>PUT</td>
-        <td>None</td>
-        <td>A text message and http status indication if the new username is successful
+        <td> {<br>
+            "Username": type: "string", <br>
+            "Password": type: "string", <br>
+            "Email": type: "string", <br>
+            "Birthday": type: "string" <br>
+            }
+        </td>
+        <td>A text message with username " updated" if the information is successfully updated
         and an error message if user not found</td>
     </tr>
     <tr>
         <td>Allow users to add a movie to their list of favorites</td>
-        <td>/users/[userName]/favorites</td>
+        <td>/users/:Username/movies/:MovieID</td>
         <td>POST</td>
         <td>{<br>
-            "title": "Movie Title"<br>
+            MovieID in URL to be 24 digit UUID  <br>
         }</td>
-        <td>A JSON formatted response of the title just added</td>
+        <td>A JSON formatted response of the user with new MovieID in the FavoriteMovies array </td>
     </tr>
     <tr>
         <td>Allow users to remove a movie to their list of favorites</td>
-        <td>/users/[userName]/favorites</td>
+        <td>/users/:Username/movies/:MovieID</td>
         <td>DELETE</td>
         <td>JSON to be defined</td>
-        <td>A text message  that a title has been removed</td>
+        <td>A JSON formatted response of the user showing the title removed from the FavoriteMovies array</td>
     </tr>
     <tr>
         <td>Allow Existing users to de-register</td>
-        <td>users/register/</td>
+        <td>/users/:</td>
         <td>DELETE</td>
         <td>None</td>
-        <td>A text message that a user email has been removed</td>
+        <td>A text message that a user been removed</td>
     </tr>
 </table>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
