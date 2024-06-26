@@ -7,6 +7,7 @@ const path = require('path');
 uuid = require('uuid');
 bodyParser = require('body-parser');
 
+const { check, validationResult } = require ('express-validator');
 const mongoose = require('mongoose');
 const models = require('./models.js');
 let Movies = models.Movie;
@@ -18,6 +19,18 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, '/public/log.t
 app.use(morgan('common', { stream: accessLogStream }));
 app.use(express.static('public'));
 app.use(bodyParser.json());
+const cors = require ('cors');
+let allowedOrigins = ['http://127.0.0.1:8080/']
+app.use(cors({
+    origin: (origin, callback)=>{
+        if (!origin) return callback (null, true);
+        if (allowedOrigins.indexOf(origin) === -1){
+            let message = 'The CORS policy for this application does not allow access from origin ' + origin;
+            return callback (new Error(message), false);
+        }
+        return callback (null, true);
+    }
+}));
 let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
@@ -85,15 +98,27 @@ app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false })
 
 
 
-app.post('/users', async (req, res) => {
+app.post('/users',
+[      
+    check ('Username', 'Username is required',).isLength({min:5}), 
+    check('Username', 'Username contains non alphanumeric characers - not allowed').isAlphanumeric(),
+    check ('Password', 'Password Required').not().isEmpty(),
+    check ('Email', 'EMail does not appear to be valid').isEmail()
+],
+async (req, res) => {
+    let errors = validationResult(req)
+    if (!errors.isEmpty()){
+        return res.status(422).json({errors: errors.array()});
+    }
+    let hashedPassword = Users.hashPassword(req.body.Password);
     await Users.findOne({ Username: req.body.Username })
         .then((user) => {
             if (user) {
-                return res.status(400).send(req.body.Username + 'already exists');
+                return res.status(400).send(req.body.Username + ' already exists');
             } else {
                 Users.create({
                     Username: req.body.Username,
-                    Password: req.body.Password,
+                    Password: hashedPassword,
                     Email: req.body.Email,
                     Birthday: req.body.Birthday
                 })
@@ -154,11 +179,11 @@ app.get("/", (req, res) => {
     res.send('Welcome to my Movies page');
 });
 
-app.get("/users/:userName/favorites", (req, res) => {
+app.get('/users/:userName/favorites', (req, res) => {
     res.json(favorites);
 });
 
-app.post('/users/:Username/movies/:MovieID', async (req, res) => {
+app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndUpdate({ Username: req.params.Username }, {
         $addToSet: { FavoriteMovies: req.params.MovieID }
     },
@@ -172,7 +197,7 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
         });
 });
 
-app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
+app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndUpdate({ Username: req.params.Username }, {
         $pull: { FavoriteMovies: req.params.MovieID }
     },
