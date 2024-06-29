@@ -106,6 +106,8 @@ app.post('/users',
     check ('Email', 'EMail does not appear to be valid').isEmail()
 ],
 async (req, res) => {
+    console.log("This is the request" , req);
+    console.log("This is the Response" , res);
     let errors = validationResult(req)
     if (!errors.isEmpty()){
         return res.status(422).json({errors: errors.array()});
@@ -216,6 +218,7 @@ app.use((err, req, res, next) => {
     res.status(500).send('Internal Error');
 });
 
-app.listen(8080, () => {
-    console.log('Your app is now listening on port 8080.');
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0',() => {
+    console.log('Listening on port ', port);
 });
