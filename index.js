@@ -12,7 +12,10 @@ const mongoose = require('mongoose');
 const models = require('./models.js');
 let Movies = models.Movie;
 let Users = models.User;
-mongoose.connect('mongodb://localhost:27017/moviedb', { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect('mongodb://localhost:27017/moviedb', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://ArrowDevAI:Eyesontheprize7!@moviedb.hqnaedv.mongodb.net/moviedb?retryWrites=true&w=majority&appName=moviedb',
+    {useNewUrlParser: true, useUnifiedTopologu: true}
+);
 
 //creation of a log
 const accessLogStream = fs.createWriteStream(path.join(__dirname, '/public/log.txt'), { flags: 'a' })
@@ -222,3 +225,4 @@ const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0',() => {
     console.log('Listening on port ', port);
 });
+
