@@ -89,7 +89,9 @@
         <td>Allow users to remove a movie to their list of favorites</td>
         <td>/users/:Username/movies/:MovieID</td>
         <td>DELETE</td>
-        <td>JSON to be defined</td>
+        <td>{<br>
+            MovieID in URL to be 24 digit UUID <br>
+        }</td>
         <td>A JSON formatted response of the user showing the title removed from the FavoriteMovies array</td>
     </tr>
     <tr>
