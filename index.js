@@ -13,8 +13,7 @@ const models = require('./models.js');
 let Movies = models.Movie;
 let Users = models.User;
 //mongoose.connect('mongodb://localhost:27017/moviedb', { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connect(process.env.CONNECTION_URI,{useNewUrlParser: true, useUnifiedTopology: true}
-);
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 //creation of a log
 const accessLogStream = fs.createWriteStream(path.join(__dirname, '/public/log.txt'), { flags: 'a' })
@@ -22,7 +21,7 @@ app.use(morgan('common', { stream: accessLogStream }));
 app.use(express.static('public'));
 app.use(bodyParser.json());
 const cors = require ('cors');
-let allowedOrigins = ['http://127.0.0.1:8080', 'http://localhost:1234'];
+let allowedOrigins = ['http://127.0.0.1:8080/', 'http://localhost:1234']
 app.use(cors({
     origin: (origin, callback)=>{
         if (!origin) return callback (null, true);
