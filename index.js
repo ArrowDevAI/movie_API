@@ -41,7 +41,7 @@ require('./passport');
 
 //Mongoose and MongoDB Dependencies 
 
-app.get('/users', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/users', async (req, res) => {
     await Users.find()
         .then((users) => {
             res.status(201).send(users);
