@@ -129,7 +129,7 @@ async (req, res) => {
         });
 });
 
-const bcrypt = require('bcryptjs'); // Ensure bcrypt is required
+const bcrypt = require('bcryptjs');
 
 app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     // Check if the authenticated user is trying to update their own details
