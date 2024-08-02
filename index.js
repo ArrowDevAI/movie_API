@@ -21,10 +21,14 @@ app.use(morgan('common', { stream: accessLogStream }));
 app.use(express.static('public'));
 app.use(bodyParser.json());
 const cors = require ('cors');
-let allowedOrigins = ['http://127.0.0.1:8080', 'http://localhost:1234']
+let allowedOrigins = ['http://127.0.0.1:8080/', 'http://localhost:1234']
 
 
-
+app.use(cors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 
 let auth = require('./auth')(app);
 const passport = require('passport');
