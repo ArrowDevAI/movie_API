@@ -111,8 +111,6 @@ app.post('/users',
     check ('Email', 'EMail does not appear to be valid').isEmail()
 ],
 async (req, res) => {
-    console.log("This is the request" , req);
-    console.log("This is the Response" , res);
     let errors = validationResult(req)
     if (!errors.isEmpty()){
         return res.status(422).json({errors: errors.array()});
@@ -142,30 +140,66 @@ async (req, res) => {
         });
 });
 
+const bcrypt = require('bcryptjs'); // Ensure bcrypt is required
 
-app.put('/users/:Username', passport.authenticate('jwt', {session: false}), async (req, res) => {
-    if (req.user.Username !== req.params.Username){
-        return res.status(400).send ('Permission Denied');
-        }
-    await Users.findOneAndUpdate({ Username: req.params.Username }, {
-        $set:
-        {
-            Username: req.body.Username,
-            Password: req.body.Password,
-            Email: req.body.Email,
-            Birthday: req.body.Birthday
-        }
-    },
-        { new: true })
-        .then((updatedUser) => {
-            res.json(updatedUser.Username + " updated");
-        })
-        .catch((err) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    // Check if the authenticated user is trying to update their own details
+    if (req.user.Username !== req.params.Username) {
+        return res.status(403).send('Permission Denied');
+    }
+    
+    const updateFields = {};
+    const { currentPassword, newPassword } = req.body;
+
+    if (currentPassword && newPassword) {
+        try {
+            // Fetch the user from the database
+            const user = await Users.findOne({ Username: req.params.Username });
+            if (!user) {
+                return res.status(404).send('User not found');
+            }
+            // Compare current password with stored hashed password
+            const isMatch = await bcrypt.compare(currentPassword, user.Password);
+            if (!isMatch) {
+                return res.status(400).send('Current password is incorrect');
+            }
+        
+            // Hash the new password
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            updateFields.Password = hashedPassword;
+        } catch (err) {
             console.error(err);
-            res.status(500).send('Error ' + err);
-        })
+            return res.status(500).send('Error: ' + err);
+        }
+    }
 
+
+    if (req.body.Username) {
+        updateFields.Username = req.body.Username;
+    }
+    if (req.body.Email) {
+        updateFields.Email = req.body.Email;
+    }
+    if (req.body.Birthday) {
+        updateFields.Birthday = req.body.Birthday;
+    }
+
+    try {
+        // Update the user in the database
+        const updatedUser = await Users.findOneAndUpdate(
+            { Username: req.params.Username },
+            { $set: updateFields },
+            { new: true }
+        );
+        res.json(updatedUser.Username + ' updated');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    }
 });
+
+
+
 
 app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndDelete({ Username: req.params.Username })
