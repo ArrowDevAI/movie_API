@@ -114,7 +114,8 @@ async (req, res) => {
                     Username: req.body.Username,
                     Password: hashedPassword,
                     Email: req.body.Email,
-                    Birthday: req.body.Birthday
+                    Birthday: req.body.Birthday,
+                    Img: req.body.Img
                 })
                     .then((user) => { res.status(201).json(user.Username + ' added') })
                     .catch((error) => {
