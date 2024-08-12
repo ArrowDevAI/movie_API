@@ -26,7 +26,7 @@ let userSchema = mongoose.Schema(
     Password: {type: String, required: true},
     Email: {type: String, required: true},
     Birthday: {type: Date},
-    Img: {type: String},
+    Img: {type: String, default:"https://static.vecteezy.com/system/resources/previews/009/734/564/original/default-avatar-profile-icon-of-social-media-user-vector.jpg"},
     FavoriteMovies: [{type: mongoose.Schema.Types.ObjectID, ref: 'Movie'}]
 });
 userSchema.statics.hashPassword = (password) => {
