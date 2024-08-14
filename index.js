@@ -132,7 +132,6 @@ async (req, res) => {
 const bcrypt = require('bcryptjs');
 
 app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    // Check if the authenticated user is trying to update their own details
     if (req.user.Username !== req.params.Username) {
         return res.status(403).send('Permission Denied');
     }
@@ -180,7 +179,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
             { $set: updateFields },
             { new: true }
         );
-        res.json(updatedUser.Username + ' updated');
+        res.json(updatedUser);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error: ' + err);
