@@ -32,7 +32,6 @@ let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
 
-
 app.get('/users', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.find()
         .then((users) => {
@@ -229,7 +228,7 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
 
 app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
 
-    console.log("Request from favorites to delete a movie: ", req)
+    console.log(req)
 
     await Users.findOneAndUpdate({ Username: req.params.Username }, {
         $pull: { FavoriteMovies: req.params.MovieID }
