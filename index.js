@@ -22,13 +22,16 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 const cors = require('cors');
 
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:1234', 'http://127.0.0.1:8080'], 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));  
 
 let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
 
-//Mongoose and MongoDB Dependencies 
 
 app.get('/users', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.find()
@@ -89,7 +92,6 @@ app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false })
             res.status(500).send('Error ' + err)
         });
 });
-
 
 
 app.post('/users',
@@ -161,7 +163,6 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
         }
     }
 
-
     if (req.body.Username) {
         updateFields.Username = req.body.Username;
     }
@@ -227,6 +228,7 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
 });
 
 app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    console.log("Request from front end to remove a movie: ", req)
     await Users.findOneAndUpdate({ Username: req.params.Username }, {
         $pull: { FavoriteMovies: req.params.MovieID }
     },
