@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 const cors = require('cors');
 
 app.use(cors({
-    origin: ['http://localhost:1234', 'http://127.0.0.1:8080'], 
+    origin: ['http://localhost:1234', 'http://127.0.0.1:8080', "https://myflixurl.netlify.app/"], 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));  
