@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 const cors = require('cors');
 
 app.use(cors({
-    origin: ['http://localhost:1234', 'http://127.0.0.1:8080', "https://myflixurl.netlify.app"], 
+    origin: ['http://localhost:1234', 'http://127.0.0.1:8080','http://localhost:4200', "https://myflixurl.netlify.app"], 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));  
@@ -227,8 +227,6 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
 });
 
 app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
-
-console.log("THIS IS THE REQUEST TO DELETE A MOVIE: ", req)
 
     await Users.findOneAndUpdate({ Username: req.params.Username }, {
         $pull: { FavoriteMovies: req.params.MovieID }
