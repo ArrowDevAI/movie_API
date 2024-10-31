@@ -143,7 +143,7 @@ const bcrypt = require('bcryptjs');
 
 app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     if (req.user.Username !== req.params.Username) {
-        return res.status(403).send('Permission Denied');
+        return res.status(403).json({ message: 'Permission Denied' });
     }
     
     const updateFields = {};
@@ -154,12 +154,12 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
             // Fetch the user from the database
             const user = await Users.findOne({ Username: req.params.Username });
             if (!user) {
-                return res.status(404).send('User not found');
+                return res.status(404).json({ message: 'User not found' });
             }
             // Compare current password with stored hashed password
             const isMatch = await bcrypt.compare(currentPassword, user.Password);
             if (!isMatch) {
-                return res.status(400).send('Current password is incorrect');
+                return res.status(400).json({ message: 'Current password is incorrect' });
             }
         
             // Hash the new password
@@ -167,7 +167,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
             updateFields.Password = hashedPassword;
         } catch (err) {
             console.error(err);
-            return res.status(500).send('Error: ' + err);
+            return res.status(500).json({ message: 'Error: ' + err });
         }
     }
 
@@ -188,10 +188,10 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
             { $set: updateFields },
             { new: true }
         );
-        res.json(updatedUser);
+        res.json({ message: 'User updated successfully', user: updatedUser });
     } catch (err) {
         console.error(err);
-        res.status(500).send('Error: ' + err);
+        res.status(500).json({ message: 'Error: ' + err });
     }
 });
 
