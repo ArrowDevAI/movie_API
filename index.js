@@ -105,7 +105,6 @@ async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         // Return a JSON response with the error details and a custom message
-        console.log(res)
         return res.status(422).json({
             status: 422,
             message: 'Validation errors occurred',
@@ -115,12 +114,11 @@ async (req, res) => {
     }
 
     // Hash the password
-    const hashedPassword = Users.hashPassword(req.body.Password);
-
+    const hashedPassword = Users.hashPassword(req.body.Password)
     try {
         // Check if the user already exists
         const existingUser = await Users.findOne({ Username: req.body.Username });
-        console.log(res)
+
         if (existingUser) {
             return res.status(400).json({ message: `${existingUser.Username} already exists` });
         } 
@@ -131,13 +129,13 @@ async (req, res) => {
             Email: req.body.Email,
             Birthday: req.body.Birthday
         });
-        console.log(res)
-        return res.status(201).json({ message: `${newUser.Username} added` });
+        return res.status(201).json({ message: `${newUser.Username} was successfully added` });
 
     } catch (error) {
         console.error(error);
-        return res.status(500).send('Error: ' + error);
+        return res.status(500).json({ message: 'An internal server error occurred. Please try again.' });
     }
+    
 });
 
 
