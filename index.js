@@ -105,11 +105,13 @@ async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         // Return a JSON response with the error details and a custom message
+        console.log(res)
         return res.status(422).json({
             status: 422,
             message: 'Validation errors occurred',
             errors: errors.array() // Include the array of errors
         });
+        
     }
 
     // Hash the password
@@ -118,11 +120,10 @@ async (req, res) => {
     try {
         // Check if the user already exists
         const existingUser = await Users.findOne({ Username: req.body.Username });
-        
+        console.log(res)
         if (existingUser) {
             return res.status(400).json({ message: `${existingUser.Username} already exists` });
         } 
-
         // Create a new user
         const newUser = await Users.create({
             Username: req.body.Username,
@@ -130,7 +131,7 @@ async (req, res) => {
             Email: req.body.Email,
             Birthday: req.body.Birthday
         });
-
+        console.log(res)
         return res.status(201).json({ message: `${newUser.Username} added` });
 
     } catch (error) {
