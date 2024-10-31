@@ -189,6 +189,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
             { new: true }
         );
         res.json({ message: 'User updated successfully', user: updatedUser });
+        console.log("UPDATED USER FROM BACK:", updatedUser)
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Error: ' + err });
