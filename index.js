@@ -106,28 +106,28 @@ async (req, res) => {
         return res.status(422).json({errors: errors.array()});
     }
     let hashedPassword = Users.hashPassword(req.body.Password);
-    await Users.findOne({ Username: req.body.Username })
-        .then((user) => {
-            if (user) {
-                return res.status(400).json({message: `${req.body.Username} already exists`});
-            } else {
-                Users.create({
-                    Username: req.body.Username,
-                    Password: hashedPassword,
-                    Email: req.body.Email,
-                    Birthday: req.body.Birthday
-                })
-                    .then((user) => { res.status(201).json({message: `${user.Username} added`}) })
-                    .catch((error) => {
-                        console.error(error);
-                        res.status(500).send('Error: ' + error);
-                    })
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-            res.status(500).send('Error: ' + error);
+    try {
+        // Check if the user already exists
+        const existingUser = await Users.findOne({ Username: req.body.Username });
+        
+        if (existingUser) {
+            return res.status(400).json({ message: `${existingUser.Username} already exists` });
+        } 
+
+        // Create a new user
+        const newUser = await Users.create({
+            Username: req.body.Username,
+            Password: hashedPassword,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
         });
+
+        return res.status(201).json({ message: `${newUser.Username} added` });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Error: ' + error);
+    }
 });
 
 const bcrypt = require('bcryptjs');
