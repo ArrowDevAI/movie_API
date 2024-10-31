@@ -109,7 +109,7 @@ async (req, res) => {
     await Users.findOne({ Username: req.body.Username })
         .then((user) => {
             if (user) {
-                return res.status(400).send(req.body.Username + ' already exists');
+                return res.status(400).json({message: `${req.body.Username} already exists`});
             } else {
                 Users.create({
                     Username: req.body.Username,
@@ -117,7 +117,7 @@ async (req, res) => {
                     Email: req.body.Email,
                     Birthday: req.body.Birthday
                 })
-                    .then((user) => { res.status(201).json(user.Username + ' added') })
+                    .then((user) => { res.status(201).json({message: `${user.Username} added`}) })
                     .catch((error) => {
                         console.error(error);
                         res.status(500).send('Error: ' + error);
