@@ -101,11 +101,20 @@ app.post('/users',
     check ('Email', 'EMail does not appear to be valid').isEmail()
 ],
 async (req, res) => {
-    let errors = validationResult(req)
-    if (!errors.isEmpty()){
-        return res.status(422).json({errors: errors.array()});
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        // Return a JSON response with the error details and a custom message
+        return res.status(422).json({
+            status: 422,
+            message: 'Validation errors occurred',
+            errors: errors.array() // Include the array of errors
+        });
     }
-    let hashedPassword = Users.hashPassword(req.body.Password);
+
+    // Hash the password
+    const hashedPassword = Users.hashPassword(req.body.Password);
+
     try {
         // Check if the user already exists
         const existingUser = await Users.findOne({ Username: req.body.Username });
@@ -129,6 +138,7 @@ async (req, res) => {
         return res.status(500).send('Error: ' + error);
     }
 });
+
 
 const bcrypt = require('bcryptjs');
 
