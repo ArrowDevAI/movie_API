@@ -147,6 +147,15 @@ app.put('/users/:Username',[
     check('Email', 'Email does not appear to be valid').optional().isEmail(),
 ], 
 passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            status: 422,
+            message: 'Validation errors occurred',
+            errors: errors.array() // Include the array of errors
+        });
+        
+    }
     if (req.user.Username !== req.params.Username) {
         return res.status(403).json({ message: 'Permission Denied' });
     }
