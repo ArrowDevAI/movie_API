@@ -148,6 +148,11 @@ app.put('/users/:Username',[
 ], 
 passport.authenticate('jwt', { session: false }), async (req, res) => {
     const errors = validationResult(req);
+    const existingUser = await Users.findOne({ Username: req.body.Username });
+
+    if (existingUser) {
+        return res.status(400).json({ message: `${existingUser.Username} already exists` });
+    } 
     if (!errors.isEmpty()) {
         return res.status(422).json({
             status: 422,
@@ -156,6 +161,7 @@ passport.authenticate('jwt', { session: false }), async (req, res) => {
         });
         
     }
+    
     if (req.user.Username !== req.params.Username) {
         return res.status(403).json({ message: 'Permission Denied' });
     }
