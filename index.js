@@ -47,7 +47,6 @@ app.get('/users', passport.authenticate('jwt', { session: false }), async (req, 
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Movies.find()
       .then((movies) => {
-        console.log(movies[0])
         res.status(201).json(movies);
       })
       .catch((error) => {
