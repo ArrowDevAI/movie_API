@@ -141,7 +141,12 @@ async (req, res) => {
 
 const bcrypt = require('bcryptjs');
 
-app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.put('/users/:Username',[
+    check('Username', 'Username must be at least 5 characters long').optional().isLength({ min: 5 }),
+    check('Username', 'Username contains non-alphanumeric characters - not allowed').optional().isAlphanumeric(),
+    check('Email', 'Email does not appear to be valid').optional().isEmail(),
+], 
+passport.authenticate('jwt', { session: false }), async (req, res) => {
     if (req.user.Username !== req.params.Username) {
         return res.status(403).json({ message: 'Permission Denied' });
     }
