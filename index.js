@@ -143,7 +143,7 @@ const bcrypt = require('bcryptjs');
 
 app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     if (req.user.Username !== req.params.Username) {
-        return res.status(403).json({ message: 'Permission Denied' }, "request:", req);
+        return res.status(403).json({ message: 'Permission Denied' }, {request: `${req}`});
     }
     
     const updateFields = {};
