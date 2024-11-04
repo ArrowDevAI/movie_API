@@ -153,11 +153,7 @@ passport.authenticate('jwt', { session: false }), async (req, res) => {
     if (existingUser) {
             return res.status(400).json({ message: `${existingUser.Username} already exists` });
         } 
-    const existingEmailUser = await Users.findOne({Email: req.body.Email});
-
-    if(existingEmailUser){
-        return res.status(400).json({ message: `That Email is already associated with another account` });
-    }
+    
     if (!errors.isEmpty()) {
         return res.status(422).json({
             status: 422,
