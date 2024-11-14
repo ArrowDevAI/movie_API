@@ -30,8 +30,6 @@ let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
 
-const bcrypt = require('bcryptjs');
-
 app.get('/users', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.find()
         .then((users) => {
@@ -135,6 +133,9 @@ async (req, res) => {
     
 });
 
+
+const bcrypt = require('bcryptjs');
+
 app.put('/users/:Username',[
     check('Username', 'Username must be at least 5 characters long').optional().isLength({ min: 5 }),
     check('Username', 'Username contains non-alphanumeric characters - not allowed').optional().isAlphanumeric(),
@@ -204,6 +205,9 @@ passport.authenticate('jwt', { session: false }), async (req, res) => {
     }
 });
 
+
+
+
 app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndDelete({ Username: req.params.Username })
         .then((user) => {
@@ -218,6 +222,7 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
             res.status(500).send('Error: ' + err);
         });
 });
+
 
 app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndUpdate({ Username: req.params.Username }, {
@@ -256,6 +261,5 @@ app.use((err, req, res, next) => {
 const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0',() => {
     console.log('Listening on port ', port);
-    console.log("Process ENV: ", process.env)
 });
 
