@@ -4,8 +4,6 @@ app.use(express.urlencoded({ extended: true }));
 const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
-uuid = require('uuid');
-bodyParser = require('body-parser');
 
 const { check, validationResult } = require ('express-validator');
 const mongoose = require('mongoose');
@@ -19,7 +17,6 @@ mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifie
 const accessLogStream = fs.createWriteStream(path.join(__dirname, '/public/log.txt'), { flags: 'a' })
 app.use(morgan('common', { stream: accessLogStream }));
 app.use(express.static('public'));
-app.use(bodyParser.json());
 const cors = require('cors');
 
 app.use(cors({
@@ -93,9 +90,9 @@ app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false })
 app.post('/users',
 [      
     check ('Username', 'Username is required',).isLength({min:5}), 
-    check('Username', 'Username contains non alphanumeric characers - not allowed').isAlphanumeric(),
+    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
     check ('Password', 'Password Required').not().isEmpty(),
-    check ('Email', 'EMail does not appear to be valid').isEmail()
+    check ('Email', 'Email does not appear to be valid').isEmail()
 ],
 async (req, res) => {
     // Check for validation errors
