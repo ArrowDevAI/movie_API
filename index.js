@@ -1,3 +1,8 @@
+/**
+ * @module
+ * movieApi
+ * @description Application for managing movies and users
+ */
 const express = require('express');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -11,14 +16,28 @@ const mongoose = require('mongoose');
 const models = require('./models.js');
 let Movies = models.Movie;
 let Users = models.User;
-// mongoose.connect('mongodb://localhost:27017/moviedb', { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+/**
+ * @constant {Promise} mongoConnection
+ * @description Connects to MongoDB using the URI parameter, CONNECTION_URI, from Heroku (local connection commented out).
+ * @param {string} uri - The MongoDB connection URI.
+ * @returns {Promise} Resolves when the connection is successful or throws an error if the connection fails.
+ */
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+/**
+ * mongoose.connect('mongodb://localhost:27017/moviedb', { useNewUrlParser: true, useUnifiedTopology: true });
+ */
 
-//creation of a log
+/**
+ * Logging setup for the application
+ * Logs all requests to a log file in 'public/log.txt'
+ */
 const accessLogStream = fs.createWriteStream(path.join(__dirname, '/public/log.txt'), { flags: 'a' })
 app.use(morgan('common', { stream: accessLogStream }));
 app.use(express.static('public'));
-app.use(bodyParser.json());
+
+/**
+ * @description CORS configuration to allow specific origins/methods/headers
+ */
 const cors = require('cors');
 
 app.use(cors({
@@ -31,17 +50,12 @@ let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
 
-app.get('/users', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Users.find()
-        .then((users) => {
-            res.status(201).send(users);
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).send('Error: ' + err);
-        });
-});
-
+/**
+ * @constant {GET} /movies
+ * @description Fetches an array of movies from the database as JSON objects. Requires token to be passed in the req header
+ * @access Protected
+ * @async
+ */
   app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
         const movies = await Movies.find();
@@ -51,7 +65,12 @@ app.get('/users', passport.authenticate('jwt', { session: false }), async (req, 
         res.status(500).json({ error: 'Error: ' + error.message });
     }
 });
-
+/**
+ * @constant {GET} /movies/:title
+ * @description Fetches movie by title. Requires token to be passed in the req header
+ * @access Protected
+ * @async
+ */
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Movies.findOne({ Title: req.params.title })
         .then((title) => {
@@ -62,7 +81,12 @@ app.get('/movies/:title', passport.authenticate('jwt', { session: false }), asyn
             res.status(500).send('Error ' + err);
         });
 });
-
+/**
+ * @constant {GET} /movies/directors/:name
+ * @description Fetches movie by director. Requires token to be passed in the req header
+ * @access Protected
+ * @async
+ */
 app.get('/movies/directors/:name', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Movies.find({ 'Director.Name': req.params.name })
         .then((director) => {
@@ -74,7 +98,12 @@ app.get('/movies/directors/:name', passport.authenticate('jwt', { session: false
             res.status(500).send('Error ' + err)
         });
 });
-
+/**
+ * @constant {GET} /movies/genres/:name
+ * @description Fetches movie by genre. Requires token to be passed in the req header
+ * @access Protected
+ * @async
+ */
 
 app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Movies.find({ 'Genre.Name': req.params.name })
@@ -87,6 +116,8 @@ app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false })
             res.status(500).send('Error ' + err)
         });
 });
+
+
 
 
 app.post('/users',
@@ -136,7 +167,12 @@ async (req, res) => {
 
 
 const bcrypt = require('bcryptjs');
-
+/**
+ * @constant {PUT} /users/:Username
+ * @description Amends user information. Requires token to be passed in the req header
+ * @access Protected
+ * @async
+ */
 app.put('/users/:Username',[
     check('Username', 'Username must be at least 5 characters long').optional().isLength({ min: 5 }),
     check('Username', 'Username contains non-alphanumeric characters - not allowed').optional().isAlphanumeric(),
@@ -207,7 +243,12 @@ passport.authenticate('jwt', { session: false }), async (req, res) => {
 });
 
 
-
+/**
+ * @constant {DELETE} /users/:Username
+ * @description Removes a user. Requires token to be passed in the req header
+ * @access Protected
+ * @async
+ */
 
 app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndDelete({ Username: req.params.Username })
@@ -224,7 +265,12 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
         });
 });
 
-
+/**
+ * @constant {POST} /users/:Username/movies/:MovieID
+ * @description Adds movie to user Favorites. Requires token to be passed in the req header
+ * @access Protected
+ * @async
+ */
 app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndUpdate({ Username: req.params.Username }, {
         $addToSet: { FavoriteMovies: req.params.MovieID }
@@ -238,7 +284,12 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
             res.status(500).send('Error ' + err);
         });
 });
-
+/**
+ * @constant {DELETE} /users/:Username/movies/:MovieID
+ * @description Removes movie from user Favorites. Requires token to be passed in the req header
+ * @access Protected
+ * @async
+ */
 app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
 
     await Users.findOneAndUpdate({ Username: req.params.Username }, {
@@ -263,3 +314,4 @@ const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0',() => {
     console.log('Listening on port ', port);
 });
+
